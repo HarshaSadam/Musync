@@ -4,12 +4,17 @@ let startButton = document.querySelector("#start-rec");
 let stopButton = document.querySelector("#stop-rec");
 let downloadButton = document.getElementById("downloadButton");
 let logElement = document.getElementById("log");
-let recordingTimeMS = 9000;
+var recordingTimeMS = 9000;
 
 function handleFiles(event) {
   var files = event.target.files;
   $("#src").attr("src", URL.createObjectURL(files[0]));
   aud.load();
+  aud.addEventListener("loadedmetadata",()=>{
+    recordingTimeMS=aud.duration;
+    recordingTimeMS=recordingTimeMS*1000;
+    console.log(recordingTimeMS);
+  })
   
 }
 
@@ -82,7 +87,7 @@ startButton.addEventListener("click", function() {
 
   navigator.mediaDevices.getUserMedia({
     video: true,
-    audio: true
+    audio: false
   }).then(stream => {
     video.srcObject = stream;
     aud.play();
