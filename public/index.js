@@ -4,12 +4,17 @@ let startButton = document.querySelector("#start-rec");
 let stopButton = document.querySelector("#stop-rec");
 let downloadButton = document.getElementById("downloadButton");
 let logElement = document.getElementById("log");
-let recordingTimeMS = 9000;
+var recordingTimeMS = 9000;
 
 function handleFiles(event) {
   var files = event.target.files;
   $("#src").attr("src", URL.createObjectURL(files[0]));
   aud.load();
+  aud.addEventListener("loadedmetadata",()=>{
+    recordingTimeMS=aud.duration;
+    recordingTimeMS=recordingTimeMS*1000;
+    console.log(recordingTimeMS);
+  })
   
 }
 
@@ -92,10 +97,10 @@ startButton.addEventListener("click", function() {
   }).then(() => startRecording(video.captureStream(), recordingTimeMS))
   .then (recordedChunks => {
     let recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
-    video.src = URL.createObjectURL(recordedBlob);
-    downloadButton.href = recording.src;
+    var videoUrl = URL.createObjectURL(recordedBlob);
+    downloadButton.href = videoUrl;
     downloadButton.download = "RecordedVideo.webm";
-
+    downloadButton.click();
     log("Successfully recorded " + recordedBlob.size + " bytes of " +
         recordedBlob.type + " media.");
   })
