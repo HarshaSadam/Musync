@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capturing & Processing Video in HTML5</title>
+</head>
+<body>
+    
+    <video id="video" autoplay></video>
+    <button id="btn">strat</button>
+    <button id="stopbtn">stop</button>
+    <a id="ref">download</a>
+
+    <script>
+
+        window.onload=function(){
+            const parts=[];
+            let mediaRecorder;
+            navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(stream=>{
+                document.getElementById("video").srcObject=stream;
+                document.getElementById("btn").onclick=function(){
+                    mediaRecorder=new MediaRecorder(stream);
+                    mediaRecorder.start(1000);
+                    mediaRecorder.ondataavailable=function(e){
+                        parts.push(e.data);
+
+                    }
+                }
+            });
+            document.getElementById("stopbtn").onclick=function(){
+                mediaRecorder.stop();
+                const blob=new Blob(parts,{
+                    type:"video/webm"
+                });
+                const url=URL.createObjectURL(blob);
+                const a=document.getElementById("ref");
+                
+                a.style="display:none";
+                a.href=url;
+                a.download="test.webm";
+                a.click();
+            }
+        }
+    
+    </script>
+</body>
+</html>

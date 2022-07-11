@@ -82,7 +82,7 @@ startButton.addEventListener("click", function() {
 
   navigator.mediaDevices.getUserMedia({
     video: true,
-    audio: false
+    audio: true
   }).then(stream => {
     video.srcObject = stream;
     aud.play();
@@ -92,10 +92,10 @@ startButton.addEventListener("click", function() {
   }).then(() => startRecording(video.captureStream(), recordingTimeMS))
   .then (recordedChunks => {
     let recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
-    video.src = URL.createObjectURL(recordedBlob);
-    downloadButton.href = recording.src;
+    var videoUrl = URL.createObjectURL(recordedBlob);
+    downloadButton.href = videoUrl;
     downloadButton.download = "RecordedVideo.webm";
-
+    downloadButton.click();
     log("Successfully recorded " + recordedBlob.size + " bytes of " +
         recordedBlob.type + " media.");
   })
